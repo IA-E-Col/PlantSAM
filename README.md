@@ -60,13 +60,3 @@ Installe **PyTorch** en suivant les instructions officielles :
 📌 **YOLOv10** : [Télécharger le modèle ici](https://drive.google.com/file/d/1o-UcVMxktZQuz5DafjSR4T72gimdtujW/view?usp=drive_link)  
 
 📌 **Segment Anything Model (SAM)** : [Télécharger le modèle ici](https://drive.google.com/file/d/1b57wlX9tCHRp4h92or41aRnBLA38rEfg/view?usp=drive_link)  
-
----
-
-## 🎯 **Résumé**  
-
-1. Créer et activer l’environnement Conda  
-2. Installer PyTorch  
-3. Installer les dépendances avec `pip install -r requirements.txt`  
-4. Installer `sam2` et `yolov10`  
-5. Télécharger les modèles YOLO et SAM  
