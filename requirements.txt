@@ -1,0 +1,2 @@
+numpy
+git+https://github.com/facebookresearch/sam2.git@86827e2fbae8a293f61d51caa70a4b0602c04454
