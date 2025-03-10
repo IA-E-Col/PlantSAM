@@ -44,6 +44,9 @@ predictor.model.load_state_dict(torch.load("models/BBS2_1024_2_epoch5.torch"))
 model_yolo_1024 = YOLOv10("/models/best.pt")
 
 image_folder_test = "" # CHANGE THIS WITH IMAGE FOLDER PATH
+output_folder = "" # CHANGE THIS WITH OUTPUT FOLDER
+
+output_path = os.path.join(output_folder, filename)
 
 filenames = os.listdir(image_folder_test)
 
@@ -80,4 +83,5 @@ for filename in filenames:
     H, W, _ = image.shape
     reconstructed_image_tuned = np.stack((reconstructed_image_tuned[:H, :W],) * 3, axis=-1)
     reconstruced_mask_tuned = np.where(reconstructed_image_tuned != 0, image, 0)
-    cv2.imwrite(f"/home/fcastanet/data/heatmaps/{filename}", reconstruced_mask_tuned)
+    cv2.imwrite(output_path, reconstruced_mask_tuned)
+

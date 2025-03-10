@@ -1,3 +1,5 @@
+transformers
+patchify
 numpy
 patchify
 transformers
