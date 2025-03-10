@@ -60,7 +60,7 @@ Installe **PyTorch** en suivant les instructions officielles :
 ```bash
    mkdir models
    ```
-📌 **Poids du modèle SAM2** : https[Télécharger le modèle ici](://drive.google.com/file/d/1WN0pzBcQLIEF3TIMNj9JC7THtsnvds2i/view?usp=sharing).
+📌 **Poids du modèle SAM2** : https[Télécharger le modèle ici](https://drive.google.com/file/d/1WN0pzBcQLIEF3TIMNj9JC7THtsnvds2i/view?usp=sharing).
 
 📌 **YOLOv10** : [Télécharger le modèle ici](https://drive.google.com/file/d/1o-UcVMxktZQuz5DafjSR4T72gimdtujW/view?usp=drive_link)  
 
