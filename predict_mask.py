@@ -95,7 +95,7 @@ def main():
     print("Loading models...")
     predictor = SAM2ImagePredictor(build_sam2(model_cfg, checkpoint, device=device))
     predictor.model.load_state_dict(torch.load("models/BBS2_1024_2_epoch5.torch"))
-    model_yolo_1024 = YOLOv10("models/best.pt")
+    model_yolo_1024 = YOLOv10("models/trainedyolov10.pt")
 
     filenames = [f for f in os.listdir(input_folder) if f.lower().endswith((".jpg", ".jpeg", ".png"))]
 
