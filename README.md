@@ -67,3 +67,10 @@ For detailed information on how to install SAM2, please follow the guide provide
 
 📌 **PlantSAM2** : [Download the model here](https://drive.google.com/file/d/1b57wlX9tCHRp4h92or41aRnBLA38rEfg/view?usp=sharing)
 
+
+You should add the three models in the "models" repository and then you should be able to treat any images contained in a repository using this command line : 
+
+```bash
+python predict_mask.py /path/to/repository --output_folder ./results
+   ```
+
