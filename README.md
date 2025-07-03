@@ -20,6 +20,7 @@ This guide explains how to set up the environment and install the necessary depe
 ## **2. Installing PyTorch**  
 Install **PyTorch** following the official instructions:  
 [PyTorch Installation Guide](https://pytorch.org/get-started/locally/)  
+The code requires `python>=3.10`, as well as `torch>=2.5.1` and `torchvision>=0.20.1`.
 
 ---
 
@@ -29,14 +30,32 @@ Install **PyTorch** following the official instructions:
    ```bash
    pip install -r requirements.txt
    ```
-2. Install `sam2` and additional modules:  
+2. Install `sam2` and additional modules:
+
+First, move into SAM's repository. It was downloaded within the previous requirements.
+
    ```bash
    cd segment-anything-2
-   pip install -e .
-   pip install -e ".[notebooks]"
-   cd ..
    ```
-For detailed information on how to install SAM2, please follow the guide provided by the owner of [this](https://github.com/facebookresearch/sam2) repository.
+Here is the official guidelines on how to install SAM2 according to the [original repository](https://github.com/facebookresearch/sam2)
+
+```bash
+   pip install -e .
+   ```
+If you are installing on Windows, it's strongly recommended to use [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install) with Ubuntu.
+
+To use the SAM 2 predictor and run the example notebooks, `jupyter` and `matplotlib` are required and can be installed by:
+
+```bash
+pip install -e ".[notebooks]"
+```
+
+Note:
+1. It's recommended to create a new Python environment via [Anaconda](https://www.anaconda.com/) for this installation and install PyTorch 2.5.1 (or higher) via `pip` following https://pytorch.org/. If you have a PyTorch version lower than 2.5.1 in your current environment, the installation command above will try to upgrade it to the latest PyTorch version using `pip`.
+2. The step above requires compiling a custom CUDA kernel with the `nvcc` compiler. If it isn't already available on your machine, please install the [CUDA toolkits](https://developer.nvidia.com/cuda-toolkit-archive) with a version that matches your PyTorch CUDA version.
+3. If you see a message like `Failed to build the SAM 2 CUDA extension` during installation, you can ignore it and still use SAM 2 (some post-processing functionality may be limited, but it doesn't affect the results in most cases).
+
+Please see [`INSTALL.md`](./INSTALL.md) for FAQs on potential issues and solutions.
 
 ---
 
