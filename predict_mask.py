@@ -46,7 +46,10 @@ def process_image(image_path, output_path, predictor, model_yolo_1024, size, ste
 
     for i in range(num_patches_y):
         for j in range(num_patches_x):
-            current_image = Image.fromarray(image_patches[i, j, 0])
+            patch_bgr = image_patches[i, j, 0]
+            patch_rgb = cv2.cvtColor(patch_bgr, cv2.COLOR_BGR2RGB)
+            current_image = Image.fromarray(patch_rgb)
+            
             results = model_yolo_1024(source=current_image, conf=0.25, save=False)[0].boxes.xyxyn.tolist()
             final_mask = np.zeros((size, size), dtype=np.uint8)
             non_contained_boxes = []
