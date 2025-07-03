@@ -36,7 +36,7 @@ def patchify_with_border_handling(image, img_patch_size, step):
 def process_image(image_path, output_path, predictor, model_yolo_1024, size, step, img_patch_size):
     image = cv2.imread(image_path)
     if image is None:
-        print(f"Image non lue : {image_path}")
+        print(f"Cannot read image : {image_path}")
         return
 
     image_patches = patchify_with_border_handling(image, img_patch_size, step=step)
@@ -72,7 +72,7 @@ def process_image(image_path, output_path, predictor, model_yolo_1024, size, ste
     reconstructed_image_tuned = np.stack((reconstructed_image_tuned[:H, :W],) * 3, axis=-1)
     reconstructed_mask_tuned = np.where(reconstructed_image_tuned != 0, image, 0)
     cv2.imwrite(output_path, reconstructed_mask_tuned)
-    print(f"✅ Image traitée : {os.path.basename(output_path)}")
+    print(f"Treated image : {os.path.basename(output_path)}")
 
 def main():
     parser = argparse.ArgumentParser(description="Segmentation of patches in images using SAM2 and YOLOv10")
