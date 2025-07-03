@@ -36,6 +36,7 @@ Install **PyTorch** following the official instructions:
    pip install -e ".[notebooks]"
    cd ..
    ```
+For detailed information on how to install SAM2, please follow the guide provided by the owner of [this](https://github.com/facebookresearch/sam2) repository.
 
 ---
 
