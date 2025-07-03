@@ -2,6 +2,7 @@ import os
 import json
 import cv2
 import torch
+import argparse
 import numpy as np
 from PIL import Image
 from patchify import patchify
@@ -32,39 +33,24 @@ def patchify_with_border_handling(image, img_patch_size, step):
     image_padded = np.pad(image, ((0, pad_h), (0, pad_w), (0, 0)), mode='constant')
     return patchify(image_padded, img_patch_size, step=step)
 
-# Configuration
-device = "cuda"
-size = 1024
-step = size
-img_patch_size = (size, size, 3)
-checkpoint = "models/sam2_hiera_large.pt"
-model_cfg = "sam2_hiera_l.yaml"
-predictor = SAM2ImagePredictor(build_sam2(model_cfg, checkpoint, device="cuda"))
-predictor.model.load_state_dict(torch.load("models/BBS2_1024_2_epoch5.torch"))
-model_yolo_1024 = YOLOv10("/models/best.pt")
-
-image_folder_test = "" # CHANGE THIS WITH IMAGE FOLDER PATH
-output_folder = "" # CHANGE THIS WITH OUTPUT FOLDER
-
-output_path = os.path.join(output_folder, filename)
-
-filenames = os.listdir(image_folder_test)
-
-for filename in filenames:
-    image_path = os.path.join(image_folder_test, filename)
+def process_image(image_path, output_path, predictor, model_yolo_1024, size, step, img_patch_size):
     image = cv2.imread(image_path)
+    if image is None:
+        print(f"Image non lue : {image_path}")
+        return
+
     image_patches = patchify_with_border_handling(image, img_patch_size, step=step)
     num_patches_y, num_patches_x = image_patches.shape[:2]
     patch_height, patch_width = image_patches.shape[3:5]
     reconstructed_image_tuned = np.zeros((num_patches_y * patch_height, num_patches_x * patch_width), dtype=np.uint8)
-    
+
     for i in range(num_patches_y):
         for j in range(num_patches_x):
             current_image = Image.fromarray(image_patches[i, j, 0])
             results = model_yolo_1024(source=current_image, conf=0.25, save=False)[0].boxes.xyxyn.tolist()
             final_mask = np.zeros((size, size), dtype=np.uint8)
             non_contained_boxes = []
-            
+
             for box in results:
                 box = [int(elem * size) for elem in box]
                 if not any(is_contained_within(box, existing_box) for existing_box in non_contained_boxes):
@@ -72,16 +58,55 @@ for filename in filenames:
                     with torch.no_grad():
                         with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
                             predictor.set_image(current_image)
-                            masks, scores, _ = predictor.predict(point_coords=None, point_labels=None, box=np.array(box)[None, :], multimask_output=False)
+                            masks, scores, _ = predictor.predict(
+                                point_coords=None, point_labels=None,
+                                box=np.array(box)[None, :], multimask_output=False)
                             prediction = masks[np.argmax(scores)].astype(np.uint8)
                     final_mask = np.maximum(final_mask, cv2.resize(prediction, (size, size)))
-            
+
             y_start, y_end = i * patch_height, (i + 1) * patch_height
             x_start, x_end = j * patch_width, (j + 1) * patch_width
             reconstructed_image_tuned[y_start:y_end, x_start:x_end] = final_mask
-    
+
     H, W, _ = image.shape
     reconstructed_image_tuned = np.stack((reconstructed_image_tuned[:H, :W],) * 3, axis=-1)
-    reconstruced_mask_tuned = np.where(reconstructed_image_tuned != 0, image, 0)
-    cv2.imwrite(output_path, reconstruced_mask_tuned)
+    reconstructed_mask_tuned = np.where(reconstructed_image_tuned != 0, image, 0)
+    cv2.imwrite(output_path, reconstructed_mask_tuned)
+    print(f"✅ Image traitée : {os.path.basename(output_path)}")
 
+def main():
+    parser = argparse.ArgumentParser(description="Segmentation of patches in images using SAM2 and YOLOv10")
+    parser.add_argument("input_folder", help="Path to the input folder containing images")
+    parser.add_argument("--output_folder", default="./demo", help="outpath to the output folder for segmented images")
+    args = parser.parse_args()
+    
+    input_folder = args.input_folder
+    output_folder = args.output_folder
+
+    os.makedirs(output_folder, exist_ok=True)
+
+    device = "cuda"
+    size = 1024
+    step = size
+    img_patch_size = (size, size, 3)
+    checkpoint = "models/sam2_hiera_large.pt"
+    model_cfg = "sam2_hiera_l.yaml"
+
+    print("Loading models...")
+    predictor = SAM2ImagePredictor(build_sam2(model_cfg, checkpoint, device=device))
+    predictor.model.load_state_dict(torch.load("models/BBS2_1024_2_epoch5.torch"))
+    model_yolo_1024 = YOLOv10("models/best.pt")
+
+    filenames = [f for f in os.listdir(input_folder) if f.lower().endswith((".jpg", ".jpeg", ".png"))]
+
+    if not filenames:
+        print("No images found in the input folder.")
+        return
+
+    for filename in filenames:
+        image_path = os.path.join(input_folder, filename)
+        output_path = os.path.join(output_folder, filename)
+        process_image(image_path, output_path, predictor, model_yolo_1024, size, step, img_patch_size)
+
+if __name__ == "__main__":
+    main()
