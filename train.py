@@ -253,7 +253,7 @@ for epoch in range(num_epochs):
     val_losses.append(epoch_val_losses)
 
     # Save model checkpoint
-    chemin_fichier = f"./saves_models/BBS2_{size}_6_epoch{epoch}_SAMDS.torch"
+    chemin_fichier = f"BBS2_{size}_6_epoch{epoch}_SAMDS.torch"
     torch.save(predictor.model.state_dict(), chemin_fichier)
 
     print(f'EPOCH: {epoch}')
