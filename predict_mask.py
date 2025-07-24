@@ -9,6 +9,8 @@ from patchify import patchify
 from ultralytics import YOLOv10
 from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
+import hydra
+from omegaconf import OmegaConf
 
 def calculate_iou(mask1, mask2):
     if mask1.shape != mask2.shape:
@@ -20,10 +22,6 @@ def calculate_iou(mask1, mask2):
 def is_contained_within(box1, box2):
     return box1[0] >= box2[0] and box1[1] >= box2[1] and box1[2] <= box2[2] and box1[3] <= box2[3]
 
-def read_json(json_path):
-    with open(json_path, 'r') as file:
-        return json.load(file)
-
 def patchify_with_border_handling(image, img_patch_size, step):
     H, W = image.shape[:2]
     num_patches_h = (H // step) + 1
@@ -34,25 +32,28 @@ def patchify_with_border_handling(image, img_patch_size, step):
     return patchify(image_padded, img_patch_size, step=step)
 
 def process_image(image_path, output_path, predictor, model_yolo_1024, size, step, img_patch_size):
-    image = cv2.imread(image_path)
-    if image is None:
+    image_bgr = cv2.imread(image_path)
+
+    if image_bgr is None:
         print(f"Cannot read image : {image_path}")
         return
 
-    image_patches = patchify_with_border_handling(image, img_patch_size, step=step)
+    # Découpage en patchs
+    image_patches = patchify_with_border_handling(image_bgr, img_patch_size, step=step)
     num_patches_y, num_patches_x = image_patches.shape[:2]
     patch_height, patch_width = image_patches.shape[3:5]
-    reconstructed_image_tuned = np.zeros((num_patches_y * patch_height, num_patches_x * patch_width), dtype=np.uint8)
+    reconstructed_mask_full = np.zeros((num_patches_y * patch_height, num_patches_x * patch_width), dtype=np.uint8)
 
     for i in range(num_patches_y):
         for j in range(num_patches_x):
             patch_bgr = image_patches[i, j, 0]
             patch_rgb = cv2.cvtColor(patch_bgr, cv2.COLOR_BGR2RGB)
-            current_image = Image.fromarray(patch_rgb)
-            
-            results = model_yolo_1024(source=current_image, conf=0.25, save=False)[0].boxes.xyxyn.tolist()
-            final_mask = np.zeros((size, size), dtype=np.uint8)
+
+            # Détection YOLO
+            results = model_yolo_1024(source=patch_rgb, conf=0.25, save=False)[0].boxes.xyxyn.tolist()
+            final_patch_mask = np.zeros((size, size), dtype=np.uint8)
             non_contained_boxes = []
+
 
             for box in results:
                 box = [int(elem * size) for elem in box]
@@ -60,27 +61,39 @@ def process_image(image_path, output_path, predictor, model_yolo_1024, size, ste
                     non_contained_boxes.append(box)
                     with torch.no_grad():
                         with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
-                            predictor.set_image(current_image)
+                            predictor.set_image(patch_rgb)
                             masks, scores, _ = predictor.predict(
                                 point_coords=None, point_labels=None,
                                 box=np.array(box)[None, :], multimask_output=False)
                             prediction = masks[np.argmax(scores)].astype(np.uint8)
-                    final_mask = np.maximum(final_mask, cv2.resize(prediction, (size, size)))
+                    final_patch_mask = np.maximum(final_patch_mask, cv2.resize(prediction, (size, size)))
 
+            # Reconstruction du masque global
             y_start, y_end = i * patch_height, (i + 1) * patch_height
             x_start, x_end = j * patch_width, (j + 1) * patch_width
-            reconstructed_image_tuned[y_start:y_end, x_start:x_end] = final_mask
+            reconstructed_mask_full[y_start:y_end, x_start:x_end] = final_patch_mask
 
-    H, W, _ = image.shape
-    reconstructed_image_tuned = np.stack((reconstructed_image_tuned[:H, :W],) * 3, axis=-1)
-    reconstructed_mask_tuned = np.where(reconstructed_image_tuned != 0, image, 0)
-    cv2.imwrite(output_path, reconstructed_mask_tuned)
+    # Recadrage à la taille originale
+    H, W, _ = image_bgr.shape
+    reconstructed_mask_full = reconstructed_mask_full[:H, :W]
+
+    # Application du masque sur l'image d'origine
+    reconstructed_mask_rgb = np.stack((reconstructed_mask_full,) * 3, axis=-1)  # [H, W, 3]
+    output_image_bgr = np.where(reconstructed_mask_rgb != 0, image_bgr, 0)
+
+    cv2.imwrite(output_path, output_image_bgr)
     print(f"Treated image : {os.path.basename(output_path)}")
 
 def main():
+
+        # --- Ajoute cette partie ---
+    if not hydra.core.global_hydra.GlobalHydra.instance().is_initialized():
+        hydra.initialize(config_path="sam2/sam2_configs", version_base=None)
+    # ---------------------------
+
     parser = argparse.ArgumentParser(description="Segmentation of patches in images using SAM2 and YOLOv10")
     parser.add_argument("input_folder", help="Path to the input folder containing images")
-    parser.add_argument("--output_folder", default="./demo", help="outpath to the output folder for segmented images")
+    parser.add_argument("--output_folder", default="./demo", help="Path to the output folder for segmented images")
     args = parser.parse_args()
     
     input_folder = args.input_folder
