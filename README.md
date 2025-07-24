@@ -20,10 +20,20 @@ This guide explains how to set up the environment and install the necessary depe
 ## **2. Installing PyTorch**  
 Install **PyTorch** following the official instructions:  
 [PyTorch Installation Guide](https://pytorch.org/get-started/locally/)  
-The code requires `python>=3.10`, as well as `torch>=2.5.1` and `torchvision>=0.20.1`.
 
-Be sure to install a version that supports GPU's use.
+For exemple if you have CUDA 12.1, execute 
 
+   ```bash
+   pip install torch==2.5.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+   ```
+
+Verify with : 
+
+   ```bash
+   python -c "import torch; print(torch.cuda.is_available())"
+   ```
+
+It should print true.
 ---
 
 ## 🔹 **3. Installing Dependencies**  
