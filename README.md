@@ -93,3 +93,20 @@ You should add the three models in the "models" repository and then you should b
 python predict_mask.py /path/to/repository --output_folder ./results
    ```
 
+## 🔹 **6. Training Example with CLI Script**
+
+Once everything is installed, you can train the SAM2 model using your dataset and masks via the CLI version of the training script. Here's an example:
+
+```bash
+python train_sam2_cli.py \
+  --images_path /path/to/images \
+  --gt_path /path/to/ground_truth_masks \
+  --dataset_json /path/to/dataset.json \
+  --model_cfg sam2_hiera_l.yaml \
+  --checkpoint ./models/sam2_checkpoint.pt \
+  --output_dir ./outputs \
+  --patch_size 1024 \
+  --epochs 20
+```
+
+Make sure the JSON file contains the list of image filenames used during training and that all paths point to valid data.
