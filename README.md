@@ -131,7 +131,7 @@ You should add the three models in the "models" repository and then you should b
 python predict_mask.py /path/to/repository --output_folder ./results
    ```
 
-For a direct test you can use : 
+Test with sample images : 
 
 ```bash
 python predict_mask.py .\test_images\ --output_folder ./results
