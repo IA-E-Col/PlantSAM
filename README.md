@@ -22,6 +22,8 @@ Install **PyTorch** following the official instructions:
 [PyTorch Installation Guide](https://pytorch.org/get-started/locally/)  
 The code requires `python>=3.10`, as well as `torch>=2.5.1` and `torchvision>=0.20.1`.
 
+Be sure to install a version that supports GPU's use.
+
 ---
 
 ## 🔹 **3. Installing Dependencies**  
@@ -32,16 +34,42 @@ The code requires `python>=3.10`, as well as `torch>=2.5.1` and `torchvision>=0.
    ```
 2. Install `sam2` and additional modules:
 
-First, move into SAM's repository. It was downloaded within the previous requirements.
+First, clone SAM2's repository and switch to a stable branch.
 
    ```bash
-   cd segment-anything-2
-   ```
-Here is the official guidelines on how to install SAM2 according to the [original repository](https://github.com/facebookresearch/sam2)
+      git clone https://github.com/facebookresearch/sam2.git
 
-```bash
-   pip install -e .
+      cd sam2
+
+      git checkout 86827e2fbae8a293f61d51caa70a4b0602c04454 
+
    ```
+
+Then upgrade the setuptools wheel and compile the project using : 
+
+   ```bash
+      pip install --upgrade pip setuptools wheel
+
+      pip install --no-build-isolation -e .
+
+      cd ..
+
+   ```
+
+If you experience problems with the definition of the CUDA_HOME or CUDA_PATH variables, here is a way of fixing it,
+
+   ```bash
+
+      $cuda = "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4"
+      
+      $env:CUDA_HOME = $cuda
+      $env:CUDA_PATH = $cuda
+      $env:PATH = "$cuda\bin;$cuda\libnvvp;$env:PATH"
+
+   ```
+
+If you want to explore thee official guidelines on how to install SAM2 according to the [original repository](https://github.com/facebookresearch/sam2)
+
 If you are installing on Windows, it's strongly recommended to use [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install) with Ubuntu.
 
 To use the SAM 2 predictor and run the example notebooks, `jupyter` and `matplotlib` are required and can be installed by:
