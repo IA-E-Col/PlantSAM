@@ -139,6 +139,13 @@ python predict_mask.py .\test_images\ --output_folder ./results
 
 ## 🔹 **6. Training Example with CLI Script**
 
+First you need to install some extra modules
+
+```bash
+   pip install -U scikit-learn
+   pip install monai
+```
+
 Once everything is installed, you can train the SAM2 model using your dataset and masks via the CLI version of the training script. Here's an example:
 
 ```bash
