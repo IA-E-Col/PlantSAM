@@ -55,7 +55,7 @@ First, clone SAM2's repository and switch to a stable branch.
 
    ```
 
-Then upgrade the setuptools wheel and compile the project using : 
+Then upgrade setuptools and install the project in editable mode,
 
    ```bash
       pip install --upgrade pip setuptools wheel
