@@ -13,6 +13,7 @@ from sklearn.model_selection import train_test_split
 from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
 import monai
+import hydra
 
 def read_json(json_path):
     with open(json_path, 'r') as file:
@@ -20,6 +21,14 @@ def read_json(json_path):
     return data
 
 def main(args):
+
+    
+        # --- Ajoute cette partie ---
+    if not hydra.core.global_hydra.GlobalHydra.instance().is_initialized():
+        hydra.initialize(config_path="sam2/sam2_configs", version_base=None)
+    # ---------------------------
+
+
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     sam_model = build_sam2(args.model_cfg, args.checkpoint, device=device)
