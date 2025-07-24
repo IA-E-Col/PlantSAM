@@ -69,16 +69,28 @@ def main(args):
 
         for k in tqdm(train_indices):
             if image_name != train_data[k]:
+                img_path = os.path.join(args.images_path, train_data[k])
+                gt_path = os.path.join(args.gt_path, train_data[k])
+
+                if not os.path.exists(img_path) or not os.path.exists(gt_path):
+                    print(f"missing file : {img_path} ou {gt_path}")
+                    continue
+
                 try:
-                    current_image = cv2.imread(os.path.join(args.images_path, train_data[k]))
+                    current_image = cv2.imread(img_path)
                     if current_image is None:
+                        print(f"Impossible to read the image : {img_path}")
                         continue
                     current_image = cv2.cvtColor(current_image, cv2.COLOR_BGR2RGB)
-                    gt_grayscale = cv2.imread(os.path.join(args.gt_path, train_data[k]), cv2.IMREAD_GRAYSCALE)
+
+                    gt_grayscale = cv2.imread(gt_path, cv2.IMREAD_GRAYSCALE)
                     if gt_grayscale is None:
+                        print(f"Impossible to read the mask : {gt_path}")
                         continue
-                except cv2.error:
+                except cv2.error as e:
+                    print(f"Error OpenCV : {e} for {img_path}")
                     continue
+
 
             image_patches = patchify_with_border_handling(current_image, img_patch_size, step=step)
             gt_mask_patches = patchify_with_border_handling(gt_grayscale, img_patch_size[:2], step=step)
