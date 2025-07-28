@@ -4,7 +4,7 @@ This guide explains how to set up the environment and install the necessary depe
 
 ---
 
-## 🔹 **1. Creating the Python Environment**  
+## **1. Creating the Python Environment**  
 
 1. Create a new Conda environment with Python 3.11.9:  
    ```bash
@@ -36,7 +36,7 @@ Verify with :
 It should print true.
 ---
 
-## 🔹 **3. Installing Dependencies**  
+## **3. Installing Dependencies**  
 
 1. Install the required packages:  
    ```bash
@@ -78,7 +78,7 @@ If you experience problems with the definition of the CUDA_HOME or CUDA_PATH var
 
    ```
 
-If you want to explore thee official guidelines on how to install SAM2 according to the [original repository](https://github.com/facebookresearch/sam2)
+If you want to explore the official guidelines on how to install SAM2 according to the [original repository](https://github.com/facebookresearch/sam2)
 
 If you are installing on Windows, it's strongly recommended to use [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install) with Ubuntu.
 
@@ -113,16 +113,18 @@ Please see [`INSTALL.md`](./INSTALL.md) for FAQs on potential issues and solutio
 
 ---
 
-## 🔹 **5. Downloading Models**  
+## **5. Downloading Models**  
+
+Create the `models` directory: 
 
 ```bash
    mkdir models
    ```
-📌 **SAM2 model weights** : [Download the model here](https://drive.google.com/file/d/1WN0pzBcQLIEF3TIMNj9JC7THtsnvds2i/view?usp=sharing)
+**SAM2 model weights** : [Download the model here](https://drive.google.com/file/d/1WN0pzBcQLIEF3TIMNj9JC7THtsnvds2i/view?usp=sharing)
 
-📌 **YOLOv10** : [Download the model here](https://drive.google.com/file/d/1o-UcVMxktZQuz5DafjSR4T72gimdtujW/view?usp=sharing)
+**YOLOv10** : [Download the model here](https://drive.google.com/file/d/1o-UcVMxktZQuz5DafjSR4T72gimdtujW/view?usp=sharing)
 
-📌 **PlantSAM2** : [Download the model here](https://drive.google.com/file/d/1b57wlX9tCHRp4h92or41aRnBLA38rEfg/view?usp=sharing)
+**PlantSAM2** : [Download the model here](https://drive.google.com/file/d/1b57wlX9tCHRp4h92or41aRnBLA38rEfg/view?usp=sharing)
 
 
 You should add the three models in the "models" repository and then you should be able to treat any images contained in a repository using this command line : 
@@ -137,7 +139,7 @@ Test with sample images :
 python predict_mask.py .\test_images\ --output_folder ./results
    ```
 
-## 🔹 **6. Training Example with CLI Script**
+## **6. Training Example with CLI Script**
 
 First you need to install some extra modules
 
