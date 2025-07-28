@@ -4,34 +4,44 @@ This guide explains how to set up the environment and install the necessary depe
 
 ---
 
+## **1. Creating the Python Environment**
 
+We recommend using a **Python virtual environment** (`venv`). 
 
+### **Option A — Using Python Virtual Environment (`venv`)** *Recommended*
 
+1. Create a virtual environment using `venv`:
 
-
-
-
-
-
-
-
-
-
-
-
-
-## **1. Creating the Python Environment**  
-
-1. Create a new Conda environment with Python 3.11.9:  
    ```bash
-   conda create --name PlantSAM2 python==3.11.9
-   ```
-2. Activate the environment :  
-   ```bash
-   conda activate PlantSAM2
+   python3 -m venv PlantSAM2
    ```
 
----
+2. Activate the environment:
+
+   - On **Linux/macOS**:
+     ```bash
+     source PlantSAM2/bin/activate
+     ```
+   - On **Windows**:
+     ```bash
+     PlantSAM2\\Scripts\\activate
+     ```
+
+3. Upgrade `pip`:
+
+   ```bash
+   pip install --upgrade pip
+   ```
+
+### **Option B — Using Conda (Legacy or Advanced Users)**
+
+If you prefer using Conda (e.g., for GPU/driver compatibility or institutional setups), you can still use:
+
+```bash
+conda create --name PlantSAM2 python==3.11.9
+conda activate PlantSAM2
+```
+
 
 ## **2. Installing PyTorch**  
 Install **PyTorch** following the official instructions:  
@@ -49,8 +59,7 @@ Verify with :
    python -c "import torch; print(torch.cuda.is_available())"
    ```
 
-It should print true.
----
+It should print true. 
 
 ## **3. Installing Dependencies**  
 
@@ -111,7 +120,6 @@ Note:
 
 Please see [`INSTALL.md`](./INSTALL.md) for FAQs on potential issues and solutions.
 
----
 
 ## **4. Installing YOLOv10**  
 
@@ -127,7 +135,6 @@ Please see [`INSTALL.md`](./INSTALL.md) for FAQs on potential issues and solutio
    cd ..
    ```
 
----
 
 ## **5. Downloading Models**  
 
@@ -165,16 +172,12 @@ The Figshare repository provides two ZIP files:
 - **`segmentation_datasets.zip`** (≈11 GB): for training and testing the segmentation models.
 - **`OOD dataset.zip`** (≈1.5 GB): for evaluating object detection and segmentation under Out-Of-Distribution (OOD) conditions.
 
----
-
 ### Step 1 — Create the data directory
 
 ```bash
 mkdir data
 cd data
 ```
-
----
 
 ### Step 2 — Download and extract the datasets
 
@@ -210,8 +213,6 @@ data/finetune_dataset/
 │   └── unsegmented_images/
 └── test/
 ```
-
----
 
 #### 2. OOD Evaluation Dataset
 
