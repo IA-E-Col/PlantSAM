@@ -4,6 +4,22 @@ This guide explains how to set up the environment and install the necessary depe
 
 ---
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## **1. Creating the Python Environment**  
 
 1. Create a new Conda environment with Python 3.11.9:  
@@ -115,7 +131,7 @@ Please see [`INSTALL.md`](./INSTALL.md) for FAQs on potential issues and solutio
 
 ## **5. Downloading Models**  
 
-Create the `models` directory: 
+Create the `models directory: 
 
 ```bash
    mkdir models
@@ -139,7 +155,106 @@ Test with sample images :
 python predict_mask.py .\test_images\ --output_folder ./results
    ```
 
-## **6. Training Example with CLI Script**
+
+## **6. Downloading the Datasets**
+
+Please organize the datasets into a folder named `data` at the root of the repository.
+
+The Figshare repository provides two ZIP files:
+
+- **`segmentation_datasets.zip`** (≈11 GB): for training and testing the segmentation models.
+- **`OOD dataset.zip`** (≈1.5 GB): for evaluating object detection and segmentation under Out-Of-Distribution (OOD) conditions.
+
+---
+
+### Step 1 — Create the data directory
+
+```bash
+mkdir data
+cd data
+```
+
+---
+
+### Step 2 — Download and extract the datasets
+
+#### 1. Segmentation Dataset
+
+This archive contains:
+- A `train/` folder with:
+  - `segmented_images/`: segmented masks (1476 images)
+  - `unsegmented_images/`: original RGB images (1476 images)
+- A `test/` folder with:
+  - 333 test images for final evaluation.
+
+Download the ZIP file from Figshare:  
+[https://doi.org/10.6084/m9.figshare.29538065.v3](https://doi.org/10.6084/m9.figshare.29538065.v3)
+
+Then extract the archive:
+
+```bash
+unzip segmentation_datasets.zip -d finetune_dataset
+```
+
+The training/validation split (80%/20%) is handled **internally by the training script** using the file:
+
+```bash
+very_cleaned_dataset_1476.json
+```
+
+**Expected folder structure after extraction:**
+```
+data/finetune_dataset/
+├── train/
+│   ├── segmented_images/
+│   └── unsegmented_images/
+└── test/
+```
+
+---
+
+#### 2. OOD Evaluation Dataset
+
+This ZIP file provides images to test segmentation robustness on edge cases (colored backgrounds, overlapping parts, noisy textures, etc.).
+
+Download from:  
+[https://doi.org/10.6084/m9.figshare.29538065.v3](https://doi.org/10.6084/m9.figshare.29538065.v3)
+
+Extract it as:
+
+```bash
+unzip "OOD dataset.zip" -d ood_dataset
+```
+
+**Expected folder:**
+```
+data/ood_dataset/
+```
+
+---
+
+### Step 3 — Final Folder Structure
+
+After downloading and extracting everything, your repository should look like this:
+
+```
+PlantSAM/
+├── models/
+├── data/
+│   ├── yolov10_dataset/         # From YOLO detection dataset ZIP
+│   ├── finetune_dataset/        # From segmentation_datasets.zip
+│   │   ├── train/
+│   │   │   ├── segmented_images/
+│   │   │   └── unsegmented_images/
+│   │   └── test/
+│   ├── ood_dataset/             # From OOD dataset.zip
+│   └── ...
+├── very_cleaned_dataset_1476.json
+└── ...
+```
+
+
+## **7. Training Example with CLI Script**
 
 First you need to install some extra modules
 

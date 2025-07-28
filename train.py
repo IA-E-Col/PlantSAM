@@ -13,7 +13,7 @@ from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
 import torch.nn.functional as F
 import monai
-
+x
 def read_json(json_path):
     with open(json_path, 'r') as file:
         data = json.load(file)
@@ -74,7 +74,7 @@ train_data = read_json(fichier)
 print("prompts loaded")
 
 # Split data into training and validation sets
-train_indices, val_indices = train_test_split(list(range(len(train_data))), test_size=0.1, random_state=42)
+train_indices, val_indices = train_test_split(list(range(len(train_data))), test_size=0.2, random_state=42)
 
 for epoch in range(num_epochs):
     epoch_losses = []

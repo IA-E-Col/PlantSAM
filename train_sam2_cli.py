@@ -60,7 +60,7 @@ def main(args):
     os.makedirs(args.output_dir, exist_ok=True)
 
     train_data = read_json(args.dataset_json)
-    train_indices, val_indices = train_test_split(list(range(len(train_data))), test_size=0.1, random_state=42)
+    train_indices, val_indices = train_test_split(list(range(len(train_data))), test_size=0.2, random_state=42)
 
     for epoch in range(num_epochs):
         epoch_losses, epoch_val_losses = [], []
