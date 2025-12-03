@@ -2,6 +2,12 @@
 
 This guide explains how to set up the environment and install the necessary dependencies to use **PlantSAM2**.
 
+## Citation
+
+If you use PlantSAM / PlantSAM2 in your research, please cite:
+
+Sklab, Y., F. Castanet, H. Ariouat, S. Arib, J.-D. Zucker, E. Chenin, and E. Prifti. 2025. *PlantSAM: An object detection-driven segmentation pipeline for herbarium specimens.* Applications in Plant Sciences. e70034. [https://doi.org/10.1002/aps3.70034](https://doi.org/10.1002/aps3.70034)
+
 ---
 
 ## **1. Creating the Python Environment**
